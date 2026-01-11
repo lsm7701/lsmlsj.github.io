@@ -51,6 +51,40 @@
     <link rel="stylesheet" href="./resources/slick.css" type="text/css">
 
     <style data-emotion="css" data-s=""></style>
+<!-- 겔러리 스타일 -->
+<style>
+    /* 1. 메인 큰 이미지 규격 고정 (PC/모바일 공통) */
+    .slider-for .photo-item img,
+    .slider-for2 .photo-item img {
+        width: 100% !important;
+        height: 500px !important;    /* 이미지 높이를 강제로 고정합니다 */
+        object-fit: cover !important; /* 비율을 유지하면서 영역을 꽉 채웁니다 (잘림 방지) */
+        object-position: center !important; /* 이미지의 정중앙이 보이게 합니다 */
+    }
+
+    /* 2. 하단 썸네일 이미지 규격 고정 */
+    .slider-nav .photo-item .thum,
+    .slider-nav2 .photo-item .thum {
+        width: 100% !important;
+        height: 60px !important;      /* 썸네일의 높이를 고정합니다 */
+        background-size: cover !important;
+        background-position: center !important;
+    }
+
+    /* 3. 모바일용 (화면 너비가 768px 이하일 때) */
+    @media (max-width: 768px) {
+        .slider-for .photo-item img,
+        .slider-for2 .photo-item img {
+            height: 350px !important; /* 모바일에서는 화면에 맞게 높이를 줄입니다 */
+        }
+        .slider-nav .photo-item .thum,
+        .slider-nav2 .photo-item .thum {
+            height: 50px !important;  /* 모바일 썸네일 높이 조절 */
+        }
+    }
+</style>
+<!-- 겔러리 스타일 -->
+
     <link rel="stylesheet skin" href="./resources/coral.css" type="text/css">
     <link href="./resources/jquery-sakura.css" rel="stylesheet" type="text/css">   
 </head>
