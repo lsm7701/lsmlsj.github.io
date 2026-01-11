@@ -189,16 +189,16 @@
     <div class="container">
         <div class="row">
             <div class="slider-wrap col-md-offset-3 col-md-6 text-center" style="margin-bottom: 80px;">
-                <div class="slider-for" id="gallery-for-1">이미지를 불러오는 중입니다...</div>
-                <div class="slider-nav" id="gallery-nav-1" style="margin-top: 10px;"></div>
+                <div class="slider-for" id="auto-gallery-for-1"></div>
+                <div class="slider-nav" id="auto-gallery-nav-1" style="margin-top: 10px;"></div>
             </div>
         </div>
 
         <div class="row">
             <div class="slider-wrap2 col-md-offset-3 col-md-6 text-center" style="margin-bottom: 100px;">
-                <h3 style="font-family: 'MapoFlowerIsland'">추억들</h3>
-                <div class="slider-for2" id="gallery-for-2">이미지를 불러오는 중입니다...</div>
-                <div class="slider-nav2" id="gallery-nav-2" style="margin-top: 10px;"></div>
+                <h3>추억들</h3>
+                <div class="slider-for2" id="auto-gallery-for-2"></div>
+                <div class="slider-nav2" id="auto-gallery-nav-2" style="margin-top: 10px;"></div>
             </div>
         </div>
     </div>
@@ -301,48 +301,67 @@
     });
 </script>
 <script type="text/javascript">
-$(document).ready(function() {
-    function buildGalleryHtml(path, count, forId, navId) {
-        var forHtml = "";
-        var navHtml = "";
-        
-        for (var i = 0; i <= count; i++) {
-            var imgUrl = path + i + ".jpg";
-            // 이미지가 없을 경우를 대비해 display:block과 min-height를 줍니다.
-            forHtml += '<div class="photo-item"><img src="' + imgUrl + '" style="width:100%; min-height:200px; display:block;" onerror="this.src=\'https://via.placeholder.com/400x600?text=No+Image\'"></div>';
-            navHtml += '<div class="photo-item"><div><div style="width:50px; height:50px; display:inline-block; overflow:hidden; background:#eee;">' +
-                       '<div class="thum" style="background-image:url(' + imgUrl + '); background-size:cover; background-position:center; width:100%; height:100%;"></div>' +
-                       '</div></div></div>';
-        }
-        $(forId).html(forHtml);
-        $(navId).html(navHtml);
+    // 이미지 존재 여부 확인 함수
+    function checkImage(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+        });
     }
 
-    // 경로 앞에 / 를 붙이지 않고 images/ 로 시작합니다. (GitHub Pages 특성)
-    buildGalleryHtml("images/1/", 13, "#gallery-for-1", "#gallery-nav-1");
-    buildGalleryHtml("images/2/", 15, "#gallery-for-2", "#gallery-nav-2");
+    // 갤러리 빌드 및 슬라이더 초기화 (통합 함수)
+    async function initAutoGallery(path, forId, navId) {
+        const forContainer = $(forId);
+        const navContainer = $(navId);
+        let i = 0;
 
-    // 이미지가 HTML에 삽입된 후 Slick을 초기화합니다.
-    setTimeout(function() {
-        // 기존 슬라이더가 있다면 파괴하고 다시 실행 (중복 방지)
-        if ($('#gallery-for-1').hasClass('slick-initialized')) $('#gallery-for-1').slick('unslick');
-        if ($('#gallery-nav-1').hasClass('slick-initialized')) $('#gallery-nav-1').slick('unslick');
+        // 0.jpg부터 차례대로 검색해서 있는 만큼 추가
+        while (true) {
+            const imgUrl = path + i + ".jpg";
+            const exists = await checkImage(imgUrl);
+            
+            if (!exists) break; // 파일이 없으면 중단
 
-        $('#gallery-for-1').slick({
-            slidesToShow: 1, slidesToScroll: 1, arrows: true, fade: true, asNavFor: '#gallery-nav-1'
-        });
-        $('#gallery-nav-1').slick({
-            slidesToShow: 5, slidesToScroll: 1, asNavFor: '#gallery-for-1', focusOnSelect: true, centerMode: true
-        });
+            forContainer.append('<div class="photo-item"><img src="' + imgUrl + '" style="width:100%;"></div>');
+            navContainer.append(
+                '<div class="photo-item"><div>' +
+                '<div style="width:50px; height:50px; display:inline-block;">' +
+                '<div class="cover"></div>' +
+                '<div class="thum" style="background-image:url(' + imgUrl + ')"></div>' +
+                '</div></div></div>'
+            );
+            i++;
+            if (i > 50) break; // 무한루프 방지
+        }
 
-        $('#gallery-for-2').slick({
-            slidesToShow: 1, slidesToScroll: 1, arrows: true, fade: true, asNavFor: '#gallery-nav-2'
-        });
-        $('#gallery-nav-2').slick({
-            slidesToShow: 5, slidesToScroll: 1, asNavFor: '#gallery-for-2', focusOnSelect: true, centerMode: true
-        });
-    }, 800); // 대기 시간을 0.8초로 조금 더 늘렸습니다.
-});
+        // 이미지 로드가 완료된 후 해당 슬라이더 실행
+        if (i > 0) {
+            $(forId).slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: false,
+                adaptiveHeight: true,
+                asNavFor: navId,
+            });
+            $(navId).slick({
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                asNavFor: forId,
+                focusOnSelect: true,
+                centerMode: true
+            });
+        }
+    }
+
+    // 페이지 로딩 완료 후 실행
+    $(window).load(function () {
+        // 경로에 gallery를 포함했습니다!
+        initAutoGallery("images/gallery/1/", "#auto-gallery-for-1", "#auto-gallery-nav-1");
+        initAutoGallery("images/gallery/2/", "#auto-gallery-for-2", "#auto-gallery-nav-2");
+    });
 </script>
 </div>
 </body>
