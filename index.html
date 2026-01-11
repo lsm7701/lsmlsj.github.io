@@ -183,29 +183,21 @@
             </div>
         </div>
     </section>
-
-    <section id="gallery">
+  
+<section id="gallery">
     <div class="container">
         <div class="row">
-            <div class="col-md-offset-2 col-md-8 text-center">
-                <div class="section-title animation fadeInUp animated" style="visibility: visible;padding-top: 70px;">
-                    <p>앨범 보고 가세요.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
             <div class="slider-wrap col-md-offset-3 col-md-6 text-center" style="margin-bottom: 100px;">
-                <div class="slider-for" id="gallery-for-1"></div>
-                <div class="slider-nav" id="gallery-nav-1"></div>
+                <div class="slider-for" id="gallery-for-1" style="opacity: 0;"></div>
+                <div class="slider-nav" id="gallery-nav-1" style="margin-top: 10px; opacity: 0;"></div>
             </div>
         </div>
 
         <div class="row">
             <div class="slider-wrap2 col-md-offset-3 col-md-6 text-center" style="margin-bottom: 100px;">
                 <h3 style="font-family: 'MapoFlowerIsland'">갤러리</h3>
-                <div class="slider-for2" id="gallery-for-2"></div>
-                <div class="slider-nav2" id="gallery-nav-2"></div>
+                <div class="slider-for2" id="gallery-for-2" style="opacity: 0;"></div>
+                <div class="slider-nav2" id="gallery-nav-2" style="margin-top: 10px; opacity: 0;"></div>
             </div>
         </div>
     </div>
@@ -307,58 +299,65 @@
     });
 </script>
 <script type="text/javascript">
-    // 이미지 로드 및 슬라이더 초기화 함수
-    function loadAndInitSlick(path, count, forId, navId) {
-        var forContainer = $(forId);
-        var navContainer = $(navId);
-
-        // 0부터 count까지 일단 HTML을 다 밀어 넣습니다. 
-        // (파일 존재 체크 없이 일단 다 넣고, 없는 이미지는 브라우저가 무시하게 하거나 
-        // 넉넉하게 숫자를 맞추는 방식이 가장 에러가 적습니다.)
+$(document).ready(function() {
+    // 1. 이미지와 HTML을 강제로 생성하는 함수
+    function makeGallery(path, count, forId, navId) {
+        var forHtml = "";
+        var navHtml = "";
+        
         for (var i = 0; i <= count; i++) {
             var imgUrl = path + i + ".jpg";
-            
-            // 메인 슬라이더 추가
-            forContainer.append('<div class="photo-item"><img src="' + imgUrl + '" alt=""></div>');
-            
-            // 썸네일 슬라이더 추가
-            navContainer.append(
-                '<div class="photo-item"><div>' +
-                '<div style="width:50px; height:50px; display:inline-block;">' +
-                '<div class="cover"></div>' +
-                '<div class="thum" style="background-image:url(' + imgUrl + ')"></div>' +
-                '</div></div></div>'
-            );
+            forHtml += '<div class="photo-item"><img src="' + imgUrl + '" style="width:100%;"></div>';
+            navHtml += '<div class="photo-item"><div><div style="width:50px; height:50px; display:inline-block;"><div class="cover"></div><div class="thum" style="background-image:url(' + imgUrl + '); background-size:cover; width:100%; height:100%;"></div></div></div></div>';
         }
-
-        // HTML이 들어간 직후가 아니라, 아주 짧은 찰나(0.1초) 뒤에 슬라이더를 켭니다.
-        setTimeout(function() {
-            $(forId).slick({
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                arrows: false,
-                fade: false,
-                adaptiveHeight: true,
-                asNavFor: navId,
-            });
-            $(navId).slick({
-                slidesToShow: 5,
-                slidesToScroll: 1,
-                asNavFor: forId,
-                focusOnSelect: true,
-                centerMode: true
-            });
-        }, 100);
+        
+        $(forId).html(forHtml);
+        $(navId).html(navHtml);
     }
 
-    // 모든 리소스 로드 후 실행
-    $(window).load(function () {
-        // 갤러리 1: 경로, 사진 장수(예: 15장), 메인ID, 네비ID
-        loadAndInitSlick("images/snt/gallery/1/", 13, "#gallery-for-1", "#gallery-nav-1");
-        
-        // 갤러리 2: 경로, 사진 장수(예: 15장), 메인ID, 네비ID
-        loadAndInitSlick("images/snt/gallery/2/", 15, "#gallery-for-2", "#gallery-nav-2");
-    });
+    // 2. 갤러리 생성 (경로와 사진 장수 확인!)
+    // images/snt/gallery/1/0.jpg 가 있는지 꼭 확인하세요.
+    makeGallery("images/snt/gallery/1/", 13, "#gallery-for-1", "#gallery-nav-1");
+    makeGallery("images/snt/gallery/2/", 15, "#gallery-for-2", "#gallery-nav-2");
+
+    // 3. 브라우저가 이미지를 인지할 시간을 준 뒤 슬라이더 실행
+    setTimeout(function() {
+        // 첫 번째 슬라이더
+        $('#gallery-for-1').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            fade: true,
+            asNavFor: '#gallery-nav-1'
+        });
+        $('#gallery-nav-1').slick({
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            asNavFor: '#gallery-for-1',
+            focusOnSelect: true,
+            centerMode: true
+        });
+
+        // 두 번째 슬라이더
+        $('#gallery-for-2').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            fade: true,
+            asNavFor: '#gallery-nav-2'
+        });
+        $('#gallery-nav-2').slick({
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            asNavFor: '#gallery-for-2',
+            focusOnSelect: true,
+            centerMode: true
+        });
+
+        // 숨겨놨던 슬라이더를 보이게 함
+        $('#gallery-for-1, #gallery-nav-1, #gallery-for-2, #gallery-nav-2').css('opacity', '1');
+    }, 500); // 0.5초 대기
+});
 </script>
 </div>
 </body>
