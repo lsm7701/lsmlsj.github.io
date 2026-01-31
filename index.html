@@ -40,12 +40,20 @@
     <style data-emotion="css" data-s=""></style>
 
 <style>
+    /* [수정됨] CSS 변수를 활용한 높이 고정 */
+    /* :root에 --vh 변수 초기값 설정 */
+    :root {
+        --vh: 1vh;
+    }
+
     /* 메인 영역 배경색 및 경계 제거 스타일 */
     #main-slider {
         background-color: #f0f0f0 !important;
         overflow: hidden;
-        /* height: 100vh !important; -> JS로 제어하기 위해 !important 제거 및 min-height로 변경 */
-        height: 100vh; 
+        /* height: 100vh; 대신 아래 코드로 대체 */
+        /* 모바일 브라우저 주소창 변화에 영향받지 않도록 계산된 변수 사용 및 !important로 강제 */
+        height: 100vh; /* Fallback */
+        height: calc(var(--vh, 1vh) * 100) !important;
     }
 
     .slide-image {
@@ -53,7 +61,7 @@
         background-position: center center !important;
         background-color: #f0f0f0 !important; 
         width: 100%;
-        height: 100% !important; /* 부모 높이(#main-slider)를 따라가도록 강제 */
+        height: 100% !important; /* 부모(#main-slider) 높이를 그대로 따름 */
     }
 
     /* 갤러리 스타일 유지 */
@@ -321,27 +329,26 @@
         }
     }
 
-    // [추가됨] 모바일 주소창 높이 변화 대응 (항상 동일한 사이즈 유지)
-    function fixMainHeight() {
-        var vh = window.innerHeight;
-        // 높이를 강제로 픽셀 단위로 고정
-        $('#main-slider').css('height', vh + 'px');
-        $('.slide-image').css('height', vh + 'px');
+    // [수정됨] 모바일 주소창 높이 변화 대응 (강력한 CSS 변수 방식)
+    function setDocHeight() {
+        // 초기 로딩 시점의 높이를 1% 단위로 계산
+        var vh = window.innerHeight * 0.01;
+        // 문서 루트(root)에 변수 저장 -> CSS에서 var(--vh)로 사용
+        document.documentElement.style.setProperty('--vh', vh + 'px');
     }
 
     // 로딩 시 한 번 실행
     $(window).on('load', function () {
+        setDocHeight(); // 높이 계산 및 고정
         initAutoGallery("images/gallery/1/", "#auto-gallery-for-1", "#auto-gallery-nav-1");
         initGlobalImages();
-        
-        fixMainHeight(); // 높이 고정 함수 실행
     });
 
     // 화면 가로 사이즈(폭)가 변경될 때만 높이를 재조정 (주소창 때문에 세로만 변할 때는 무시)
     var lastWidth = $(window).width();
     $(window).on('resize', function() {
         if ($(window).width() !== lastWidth) {
-            fixMainHeight();
+            setDocHeight();
             lastWidth = $(window).width();
         }
     });
