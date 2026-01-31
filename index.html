@@ -69,11 +69,13 @@
         #main-slider, 
         #main-slider .slides li,
         .slide-image {
-            height: 100vh !important;       /* 구형 브라우저 호환 */
-            height: 100svh !important;      /* 모바일 주소창 무시하고 고정 높이 사용 */
-            min-height: 100svh !important;
+            /* CSS로는 svh를 쓰지만, JS로 한 번 더 강제 고정합니다. */
+            height: 100vh;
+            height: 100svh; 
+            min-height: 100svh;
             background-size: cover !important;
             background-attachment: scroll !important; /* 모바일 배경 고정 버그 방지 */
+            background-position: center top !important; /* 모바일에서는 위쪽 기준 정렬 */
         }
     }
 
@@ -300,14 +302,6 @@
         if (thumbUrl) {
              $('meta[property="og:image"]').attr('content', location.origin + location.pathname.replace('index.html','') + thumbUrl);
         }
-
-        // [수정됨] SubTitle 이미지 설정 (초대 글귀 위에 이미지 삽입)
-        const subTitleUrl = await getExistingUrl('images/SubTitle', '');
-        if (subTitleUrl) {
-             // 배경이 아니라 이미지 태그로 글씨 위에 삽입
-             // [수정됨] 이미지 크기를 가로 30%로 고정
-             $('.section-title').prepend('<div style="margin-bottom:20px"><img src="' + subTitleUrl + '" style="max-width:100%; width:70%;" alt="Invite Title"></div>');
-        }
     }
 
     // 갤러리 빌드 및 슬라이더 초기화 (인디케이터 버전)
@@ -377,6 +371,16 @@
     $(window).on('load', function () {
         initAutoGallery("images/gallery/1/", "#auto-gallery-for-1", "#auto-gallery-nav-1");
         initGlobalImages(); // 메인 및 썸네일 자동 로딩 실행
+        
+        // [추가됨] 모바일 브라우저 주소창 숨김/표시 시 배경 꿀렁거림 방지 (높이 강제 고정)
+        // 처음에 로딩된 화면 높이(vh)를 픽셀 단위로 박아버려서 변하지 않게 함
+        if (window.innerWidth <= 768) {
+            var fixedHeight = window.innerHeight;
+            $('#main-slider, #main-slider .slides li, .slide-image').css({
+                'height': fixedHeight + 'px',
+                'min-height': fixedHeight + 'px'
+            });
+        }
     });
 </script>
 </body>
