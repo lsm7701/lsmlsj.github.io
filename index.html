@@ -42,16 +42,18 @@
 <style>
     /* 메인 영역 배경색 및 경계 제거 스타일 */
     #main-slider {
-        background-color: #f0f0f0 !important; /* 요청하신 배경색 */
+        background-color: #f0f0f0 !important;
         overflow: hidden;
+        /* height: 100vh !important; -> JS로 제어하기 위해 !important 제거 및 min-height로 변경 */
+        height: 100vh; 
     }
 
     .slide-image {
-        background-size: cover !important; /* 이미지를 화면에 꽉 차게 */
+        background-size: cover !important; 
         background-position: center center !important;
-        background-color: #f0f0f0 !important; /* 이미지 여백 색상 통일 */
+        background-color: #f0f0f0 !important; 
         width: 100%;
-        height: 100%;
+        height: 100% !important; /* 부모 높이(#main-slider)를 따라가도록 강제 */
     }
 
     /* 갤러리 스타일 유지 */
@@ -121,7 +123,6 @@
     <div class="slide-title-outter-wrapper">
         <div class="slide-title-inner-wrapper">
             <div class="slide-title align-middle">
-                <!-- 요청하신 원래의 HTML 구조 및 인라인 스타일을 그대로 복구했습니다 -->
                 <div class="container">
                     <div class="row">
                         <div class="col-md-offset-3 col-md-6 animation delay1 fadeInUp animated" style="visibility: visible;text-shadow: rgb(164 156 156 / 37%) 1px 1px;">
@@ -320,9 +321,29 @@
         }
     }
 
+    // [추가됨] 모바일 주소창 높이 변화 대응 (항상 동일한 사이즈 유지)
+    function fixMainHeight() {
+        var vh = window.innerHeight;
+        // 높이를 강제로 픽셀 단위로 고정
+        $('#main-slider').css('height', vh + 'px');
+        $('.slide-image').css('height', vh + 'px');
+    }
+
+    // 로딩 시 한 번 실행
     $(window).on('load', function () {
         initAutoGallery("images/gallery/1/", "#auto-gallery-for-1", "#auto-gallery-nav-1");
         initGlobalImages();
+        
+        fixMainHeight(); // 높이 고정 함수 실행
+    });
+
+    // 화면 가로 사이즈(폭)가 변경될 때만 높이를 재조정 (주소창 때문에 세로만 변할 때는 무시)
+    var lastWidth = $(window).width();
+    $(window).on('resize', function() {
+        if ($(window).width() !== lastWidth) {
+            fixMainHeight();
+            lastWidth = $(window).width();
+        }
     });
 </script>
 </body>
