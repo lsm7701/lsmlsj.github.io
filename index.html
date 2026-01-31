@@ -65,17 +65,18 @@
             height: 520px !important; 
         }
         
-        /* [추가됨] 모바일에서 메인 슬라이더 배경 꽉 차게 및 높이 고정 (주소창 점프 방지) */
+        /* [수정됨] 모바일에서 메인 슬라이더 배경 꽉 차게 고정 및 움직임 효과 제거 */
         #main-slider, 
         #main-slider .slides li,
         .slide-image {
-            /* CSS로는 svh를 쓰지만, JS로 한 번 더 강제 고정합니다. */
-            height: 100vh;
-            height: 100svh; 
-            min-height: 100svh;
+            height: 100vh !important;       
+            height: 100svh !important;      
+            min-height: 100svh !important;
             background-size: cover !important;
-            background-attachment: scroll !important; /* 모바일 배경 고정 버그 방지 */
-            background-position: center top !important; /* 모바일에서는 위쪽 기준 정렬 */
+            background-attachment: scroll !important; 
+            /* 중요: 패럴럭스 JS 효과가 background-position을 건드리지 못하게 !important로 고정 */
+            background-position: center center !important; 
+            transform: none !important; /* 움직임 제거 */
         }
     }
 
@@ -149,7 +150,7 @@
 
         </div></div> <ul class="slides">
         <li class="flex-active-slide2" style="position: relative; opacity: 1; display: block; ">
-            <!-- [수정됨] 꽉 차게 보이도록 cover로 변경, 움직임 효과(stellar) 유지 -->
+            <!-- PC에서는 움직임 효과 유지, 모바일은 CSS로 무력화됨 -->
             <div data-stellar-ratio="0.5" class="slide-image" style="background-image:url(images/Main.JPG); background-position:center center; background-size: cover; background-repeat: no-repeat; background-color: #f0f0f0;">
             </div>
         </li>
@@ -372,14 +373,16 @@
         initAutoGallery("images/gallery/1/", "#auto-gallery-for-1", "#auto-gallery-nav-1");
         initGlobalImages(); // 메인 및 썸네일 자동 로딩 실행
         
-        // [추가됨] 모바일 브라우저 주소창 숨김/표시 시 배경 꿀렁거림 방지 (높이 강제 고정)
-        // 처음에 로딩된 화면 높이(vh)를 픽셀 단위로 박아버려서 변하지 않게 함
+        // [수정됨] 모바일 브라우저 주소창 숨김/표시 시 배경 꿀렁거림 방지 (높이 강제 고정)
         if (window.innerWidth <= 768) {
             var fixedHeight = window.innerHeight;
             $('#main-slider, #main-slider .slides li, .slide-image').css({
                 'height': fixedHeight + 'px',
                 'min-height': fixedHeight + 'px'
             });
+            
+            // [추가됨] 모바일에서는 stellar 효과를 끄기 위해 속성 제거
+            $('.slide-image').removeAttr('data-stellar-ratio');
         }
     });
 </script>
