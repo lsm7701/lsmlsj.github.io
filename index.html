@@ -40,11 +40,12 @@
     <style data-emotion="css" data-s=""></style>
 <!-- 갤러리 및 스타일 최신화 -->
 <style>
-    /* [수정됨] 갤러리 전체 컨테이너 크기 조절 (화면 꽉 차지 않게 축소) */
+    /* [수정됨] 갤러리 전체 컨테이너 크기 조절 및 중앙 정렬 강제 */
     .slider-wrap {
         width: 80% !important;        /* 모바일 너비 80% */
         max-width: 500px !important;  /* PC 최대 너비 제한 */
         margin: 0 auto 80px auto !important; /* 중앙 정렬 */
+        float: none !important;       /* [중요] 부트스트랩 float 해제하여 PC에서 중앙 정렬되도록 함 */
     }
 
     /* 1. 메인 큰 이미지 규격 */
@@ -81,7 +82,7 @@
             transform: none !important;
         }
 
-        /* [수정됨] 모바일 타이틀 텍스트 중앙 정렬 및 고정 */
+        /* [수정됨] 모바일 타이틀 텍스트 하단 정렬 및 고정 */
         .slide-title-outter-wrapper {
             position: absolute !important;
             top: 0 !important;
@@ -89,11 +90,12 @@
             width: 100% !important;
             height: 100% !important;
             display: flex !important;       
-            align-items: center !important; 
-            justify-content: center !important; 
+            align-items: flex-end !important;   /* [수정됨] 하단 정렬 */
+            justify-content: center !important; /* 가로 중앙 정렬 */
             transform: none !important;
             margin: 0 !important;
             padding: 0 !important;
+            padding-bottom: 60px !important;    /* [수정됨] 하단 여백 추가 (공백 한 줄 정도) */
         }
         
         .slide-title-inner-wrapper {
