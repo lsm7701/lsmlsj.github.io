@@ -108,6 +108,18 @@
         color: #ff6f61;
         transform: scale(1.5);
     }
+
+    /* [추가됨] 이미지 저장 방지용 CSS */
+    img {
+        -webkit-touch-callout: none; /* iOS 길게 누르기 메뉴 차단 */
+        -webkit-user-select: none;   /* 크롬/사파리 선택 차단 */
+        -khtml-user-select: none;
+        -moz-user-select: none;      /* 파이어폭스 선택 차단 */
+        -ms-user-select: none;       /* IE/엣지 선택 차단 */
+        user-select: none;           /* 표준 선택 차단 */
+        -webkit-user-drag: none;     /* 이미지 드래그 차단 (크롬/사파리) */
+        pointer-events: auto;        /* 클릭 이벤트는 허용하되 (슬라이드 등), 저장은 어렵게 */
+    }
 </style>
 <link rel="stylesheet skin" href="./resources/coral.css" type="text/css">
 </head>
@@ -265,6 +277,16 @@
 <script type="text/javascript" src="./resources/main-slider-fade.js"></script>
 
 <script type="text/javascript">
+    // [추가됨] 이미지 및 페이지 저장 방지 스크립트
+    // 우클릭 방지
+    document.oncontextmenu = function(){return false;}
+    
+    // 드래그 방지
+    document.ondragstart = function(){return false;}
+    
+    // 선택 방지 (텍스트 및 이미지)
+    document.onselectstart = function(){return false;}
+
     async function getExistingUrl(path, index) {
         const exts = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG'];
         for (let ext of exts) {
